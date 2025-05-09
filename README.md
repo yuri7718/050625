@@ -11,11 +11,15 @@ It is implemented based on the requirements, with the following additional condi
 
 - If the current guess is incorrect and all six attempts have been used, the program displays a message: "Game over — all six guesses have been used." The game ends.
 
+## Demo
+GitHub Pages: [https://yuri7718.github.io/050625/](https://yuri7718.github.io/050625/)
+
 ## Project Setup
 ```
 yarn install
 yarn run dev
 ```
+
 
 ## React + Vite
 

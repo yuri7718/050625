@@ -12,7 +12,7 @@ export const Keyboard = ({onKeyPress, validCharacters}) => {
     return (
       <div
         className={clsx(
-          "flex items-center justify-center rounded-md p-4 hover:cursor-pointer",
+          "flex items-center justify-center rounded-md p-4 text-black hover:cursor-pointer",
           className,
           !(children in validCharacters) && "bg-gray-300 hover:bg-gray-400",
           children in validCharacters && validCharacters[children] === 1 && "bg-amber-400 hover:bg-amber-500",

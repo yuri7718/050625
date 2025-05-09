@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { message } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { message, Modal, Button } from 'antd';
 import { Keyboard } from './Keyboard';
+import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import { clsx } from 'clsx';
-import { isSingleLetter } from './helpers';
+import { checkForWin, isSingleLetter } from './helpers';
 
 
 const N_GUESSES = 6;
@@ -18,6 +19,7 @@ export const Wordle = () => {
    *  ...
    * ]
    */
+  const [gameOver, setGameOver] = useState(false);
   const [board, setBoard] = useState(Array(N_GUESSES).fill(null).map(() => Array(WORD_LENGTH).fill('')));
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -32,21 +34,21 @@ export const Wordle = () => {
    * 2: Character is in the word and in the correct position, square is green
    */
   const [scores, setScores] = useState(Array(N_GUESSES).fill(null).map(() => Array(WORD_LENGTH).fill(-1)));
+  const [validCharacters, setValidCharacters] = useState({});
   
   /**
    * Messages
    */
   const [messageApi, contextHolder] = message.useMessage();
-  const warning = (message) => {
+  const showMessage = (type, message) => {
     messageApi.open({
       type: 'warning',
       content: message,
-      style: {
-        marginTop: '20vh',
-      }
+      style: {marginTop: '20vh'}
     });
   };
 
+  const conductorRef = useRef(null);
   /**
    * API call to validate guess
    */
@@ -67,17 +69,36 @@ export const Wordle = () => {
 
       const data = await response.json();
       if (!data.is_valid_word) {
-        warning('Invalid word');
+        showMessage('warning', 'Invalid word');
         return;
       }
+
+      // valid word
       for (let i=0; i<WORD_LENGTH; i++) {
         setTimeout(() => {
           setScores(prev => {
             const newScores = prev.map(row => [...row]);
             newScores[y][i] = data.score[i];
+            if (data.score[i] === 1 || data.score[i] === 2) {
+              setValidCharacters(prevCharacters => ({...prevCharacters, [board[y][i]]: data.score[i]}));
+            }
             return newScores;
           })
         }, i*300);
+      }
+      if (checkForWin(data.score)) {
+        setGameOver(true);
+        setTimeout(() => {
+          showMessage('success', 'Congratulations — you won!');
+          conductorRef.current.run({speed: 3, duration: 10});
+        }, WORD_LENGTH*300);
+      } else {
+        if (y+1 === N_GUESSES) {
+          setGameOver(true);
+          setTimeout(() => {
+            showMessage('warning', 'Game over — All six guesses have been used');
+          }, WORD_LENGTH*300);    
+        }
       }
       setX(0); setY(y+1);
     } catch (error) {
@@ -86,12 +107,12 @@ export const Wordle = () => {
   }
 
   const onKeyPress = (key) => {
-    if (y === N_GUESSES) return;
-    
+    if (gameOver) return;
+
     const upperCaseKey = key.toUpperCase();
     if (upperCaseKey === 'ENTER') {
       if (x !== WORD_LENGTH) {
-        warning('The word must be exactly 5 letters long');
+        showMessage('warning', 'The word must be exactly 5 letters long');
         return;
       }
       setLastPosition(null);
@@ -161,7 +182,8 @@ export const Wordle = () => {
           </div>
         ))}
       </div>
-      <div><Keyboard onKeyPress={onKeyPress} /></div>
+      <div><Keyboard onKeyPress={onKeyPress} validCharacters={validCharacters} /></div>
+      <Fireworks onInit={params => {conductorRef.current = params.conductor;}} />
     </>
   );
 }

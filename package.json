@@ -14,6 +14,7 @@
     "antd": "^5.25.0",
     "clsx": "^2.1.1",
     "react": "^19.1.0",
+    "react-canvas-confetti": "^2.0.7",
     "react-dom": "^19.1.0",
     "tailwindcss": "^4.1.5"
   },

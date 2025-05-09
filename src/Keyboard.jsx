@@ -3,14 +3,17 @@ import { BackspaceIcon } from './assets/Backspace';
 import { keys } from './constants/keys';
 
 
-export const Keyboard = ({onKeyPress}) => {
+export const Keyboard = ({onKeyPress, validCharacters}) => {
   
   const Key = ({children, className, value}) => {
     return (
       <div
         className={clsx(
-          "flex items-center justify-center rounded-md bg-gray-300 p-4 hover:cursor-pointer hover:bg-gray-400",
-          className
+          "flex items-center justify-center rounded-md p-4 hover:cursor-pointer",
+          className,
+          !(children in validCharacters) && "bg-gray-300 hover:bg-gray-400",
+          children in validCharacters && validCharacters[children] === 1 && "bg-amber-400 hover:bg-amber-500",
+          children in validCharacters && validCharacters[children] === 2 && "bg-lime-500 hover:bg-lime-600",
         )}
         onClick={() => onKeyPress(value)}
       >

@@ -1,10 +1,13 @@
-import { clsx } from 'clsx';
 import { BackspaceIcon } from './assets/Backspace';
+import { clsx } from 'clsx';
 import { keys } from './constants/keys';
 
 
 export const Keyboard = ({onKeyPress, validCharacters}) => {
   
+  /**
+   * Render each key on the keyboard
+   */
   const Key = ({children, className, value}) => {
     return (
       <div

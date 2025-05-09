@@ -7,8 +7,11 @@ export const isSingleLetter = (str) => {
   return /^[A-Z]$/.test(str);
 }
 
-
+/**
+ * Verify if the player wins 
+ * @param {number[]} score 
+ * @returns boolean
+ */
 export const checkForWin = (score) => {
-  console.log(score)
   return score.every(x => x === 2);
 }

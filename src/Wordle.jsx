@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { message, Modal, Button } from 'antd';
+import { message } from 'antd';
 import { Keyboard } from './Keyboard';
 import Fireworks from 'react-canvas-confetti/dist/presets/fireworks';
 import { clsx } from 'clsx';
@@ -19,11 +19,11 @@ export const Wordle = () => {
    *  ...
    * ]
    */
-  const [gameOver, setGameOver] = useState(false);
   const [board, setBoard] = useState(Array(N_GUESSES).fill(null).map(() => Array(WORD_LENGTH).fill('')));
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
-  
+  const [gameOver, setGameOver] = useState(false);
+
   // Used to trigger animation
   const [lastPosition, setLastPosition] = useState(null);
 
@@ -42,13 +42,14 @@ export const Wordle = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const showMessage = (type, message) => {
     messageApi.open({
-      type: 'warning',
+      type: type,
       content: message,
-      style: {marginTop: '20vh'}
+      style: { marginTop: '20vh' }
     });
   };
 
-  const conductorRef = useRef(null);
+  const conductorRef = useRef(null);  // Firewords conductor reference
+
   /**
    * API call to validate guess
    */
@@ -136,7 +137,6 @@ export const Wordle = () => {
       });
     }
   };
-
 
   useEffect(() => {
     const handleKeyPress = (event) => onKeyPress(event.key);
